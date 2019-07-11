@@ -38,7 +38,8 @@
               locations.push({
                 name: change.doc.id,
                 position: {lat: data.position._lat, lng: data.position._long},
-                title: data.title
+                title: data.title,
+                link: data.link
               })
           });
           locations.forEach(location => 
@@ -49,7 +50,7 @@
               map
             })
             var infowindow = new google.maps.InfoWindow({
-              content: location.title
+              content: location.link?`<a href=${location.link} target="_blank">${location.title}</a>`:location.title
             });
 
             marker.addListener('click', () => {
@@ -68,7 +69,7 @@
       }
     </script>
     <script async defer
-    src="https://maps.googleapis.com/maps/api/js?key=AIzaSyDK22SbkDOdia21sTd_BctStyV0NShYPvs&callback=initMap">
+    src="https://maps.googleapis.com/maps/api/js?key=AIzaSyAr6APiRLe-YKCr28cFkLrAzZ9GvakWun0&callback=initMap">
     </script>
   </body>
 </html>
