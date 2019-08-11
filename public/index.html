@@ -1,74 +1,80 @@
 <!DOCTYPE html>
 <html>
-  <head>
-    <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>Welcome to GEN Ukraine</title>
 
-    <!-- update the version number as needed -->
-    <script defer src="/__/firebase/6.2.4/firebase-app.js"></script>
-    <script defer src="/__/firebase/6.2.4/firebase-firestore.js"></script>
-    <!-- initialize the SDK after all desired features are loaded -->
-    <script defer src="/__/firebase/init.js"></script>
-     <!-- google maps api related styles -->
-    <style>
-      /* Always set the map height explicitly to define the size of the div
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Welcome to GEN Ukraine</title>
+
+  <!-- update the version number as needed -->
+  <script defer src="/__/firebase/6.2.4/firebase-app.js"></script>
+  <script defer src="/__/firebase/6.2.4/firebase-firestore.js"></script>
+  <!-- initialize the SDK after all desired features are loaded -->
+  <script defer src="/__/firebase/init.js"></script>
+  <!-- google maps api related styles -->
+  <style>
+    /* Always set the map height explicitly to define the size of the div
        * element that contains the map. */
-      #map {
-        height: 100%;
-      }
-      /* Optional: Makes the sample page fill the window. */
-      html, body {
-        height: 100%;
-        margin: 0;
-        padding: 0;
-      }
-    </style>
-  </head>
-  <body>  
-    <div id="map"></div>
-    <script>
-      var map, locations = [];
-      function initMap() {
-        map = new google.maps.Map(document.getElementById('map'), {
-          center: {lat: 49.027500, lng: 31.482780}, // geographical center of Ukraine
-          zoom: 6 // enough to see whole Ukraine territory
-        });
-      }
-      document.addEventListener('DOMContentLoaded', () => {
-        firebase.firestore()
+    #map {
+      height: 100%;
+    }
+
+    /* Optional: Makes the sample page fill the window. */
+    html,
+    body {
+      height: 100%;
+      margin: 0;
+      padding: 0;
+    }
+  </style>
+</head>
+
+<body>
+  <div id="map"></div>
+  <script>
+    var map, locations = [];
+    function initMap() {
+      map = new google.maps.Map(document.getElementById('map'), {
+        center: { lat: 49.027500, lng: 31.482780 }, // geographical center of Ukraine
+        zoom: 6 // enough to see whole Ukraine territory
+      });
+    }
+    document.addEventListener('DOMContentLoaded', () => {
+      firebase.firestore()
         .collection('settlements')
         .onSnapshot(snapshot => {
           snapshot.docChanges().forEach(change => {
-              var data = change.doc.data();
+            var data = change.doc.data();
+            if (data.position) {
               locations.push({
                 name: change.doc.id,
-                position: {lat: data.position._lat, lng: data.position._long},
+                position: { lat: data.position._lat, lng: data.position._long },
                 title: data.title,
                 link: data.link
               })
+            }
           });
-          locations.forEach(location => 
-          {
+          locations.forEach(location => {
             var marker = new google.maps.Marker({
               position: location.position,
               title: location.title,
               map
             })
             var infowindow = new google.maps.InfoWindow({
-              content: location.link?`<a href=${location.link} target="_blank">${location.title}</a>`:location.title
+              content: location.link ? `<a href=${location.link} target="_blank">${location.title}</a>` : location.title
             });
 
             marker.addListener('click', () => {
               infowindow.open(map, marker);
             });
           }
-          ) 
+          )
         });
-      });
-    </script>
-    <script async defer
+    });
+  </script>
+  <script async defer
     src="https://maps.googleapis.com/maps/api/js?key=AIzaSyAr6APiRLe-YKCr28cFkLrAzZ9GvakWun0&callback=initMap">
     </script>
-  </body>
+</body>
+
 </html>
